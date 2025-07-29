@@ -1,4 +1,4 @@
-# :ramen: miso-fetch
+# :ramen: ⚡ miso-fetch
 
 ## Build and run
 
