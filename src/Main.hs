@@ -33,7 +33,7 @@ foreign export javascript "hs_start" main :: IO ()
 ----------------------------------------------------------------------------
 -- | Main entry point
 main :: IO ()
-main = run (startComponent app)
+main = run (startApp app)
 ----------------------------------------------------------------------------
 -- | Model
 newtype Model = Model
@@ -51,7 +51,7 @@ data Action
   | ErrorHandler MisoString
   deriving (Show, Eq)
 ----------------------------------------------------------------------------
-app :: Component Model Action
+app :: App Model Action
 app = (component emptyModel updateModel viewModel)
 #ifndef WASM
   { styles =
@@ -67,7 +67,7 @@ emptyModel = Model Nothing
 -- | GitHub API method
 type GithubAPI = Get '[JSON] GitHub
 ----------------------------------------------------------------------------
-updateModel :: Action -> Effect Model Action
+updateModel :: Action -> Transition Model Action
 updateModel FetchGitHub =
   fetch "https://api.github.com" "GET" Nothing [] SetGitHub ErrorHandler
 updateModel (SetGitHub apiInfo) =
@@ -76,7 +76,7 @@ updateModel (ErrorHandler msg) =
   io_ (consoleError msg)
 ----------------------------------------------------------------------------
 -- | View function, with routing
-viewModel :: Model -> View Action
+viewModel :: Model -> View Model Action
 viewModel m = view
   where
     view =
@@ -128,7 +128,7 @@ viewModel m = view
             ]
       ]
 
-    tr :: MisoString -> View action
+    tr :: MisoString -> View Model action
     tr x = tr_ [] [ td_ [] [ text x ] ]
 
     attrs :: [Attribute Action]
