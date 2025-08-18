@@ -8,7 +8,7 @@ executable app
   main-is:
     Main.hs
   build-depends:
-    base, aeson, miso, servant
+    base, aeson, miso
   default-language:
     GHC2024
   if arch(wasm32)

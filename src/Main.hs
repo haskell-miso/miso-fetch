@@ -20,7 +20,6 @@ module Main where
 import           Data.Aeson
 import           Data.Maybe
 import           GHC.Generics
-import           Servant.API
 ----------------------------------------------------------------------------
 import           Miso hiding (defaultOptions)
 import           Miso.String
@@ -64,9 +63,6 @@ app = (component emptyModel updateModel viewModel)
 emptyModel :: Model
 emptyModel = Model Nothing
 ----------------------------------------------------------------------------
--- | GitHub API method
-type GithubAPI = Get '[JSON] GitHub
-----------------------------------------------------------------------------
 updateModel :: Action -> Transition Model Action
 updateModel FetchGitHub =
   fetch "https://api.github.com" "GET" Nothing [] SetGitHub ErrorHandler
@@ -91,8 +87,14 @@ viewModel m = view
         ]
         [ "🍜 Miso Fetch API"
         ]
-      , button_
-        attrs
+      , optionalAttrs
+        button_
+        [ onClick FetchGitHub
+        , class_ (pack "button is-large is-outlined")
+        ]
+        (isJust (m ^. info))
+        [ disabled_
+        ]
         [ "Fetch JSON from https://api.github.com"
         ]
       , case m ^. info of
@@ -130,15 +132,6 @@ viewModel m = view
 
     tr :: MisoString -> View Model action
     tr x = tr_ [] [ td_ [] [ text x ] ]
-
-    attrs :: [Attribute Action]
-    attrs =
-          [ onClick FetchGitHub
-          , class_ (pack "button is-large is-outlined")
-          ] ++
-          [ disabled_ True
-          | isJust (m ^. info)
-          ]
 ----------------------------------------------------------------------------
 -- | Structure to capture the JSON returned from https://api.github.com
 data GitHub
