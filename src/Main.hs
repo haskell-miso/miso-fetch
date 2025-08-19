@@ -24,7 +24,7 @@ import           GHC.Generics
 import           Miso hiding (defaultOptions)
 import           Miso.String
 import           Miso.Lens
-import qualified Miso.Style as CSS
+import qualified Miso.CSS as CSS
 ----------------------------------------------------------------------------
 #ifdef WASM
 foreign export javascript "hs_start" main :: IO ()
