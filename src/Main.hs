@@ -65,7 +65,7 @@ emptyModel = Model Nothing
 ----------------------------------------------------------------------------
 updateModel :: Action -> Transition Model Action
 updateModel FetchGitHub =
-  fetch "https://api.github.com" "GET" Nothing [] SetGitHub ErrorHandler
+  getJSON "https://api.github.com" [] SetGitHub ErrorHandler
 updateModel (SetGitHub apiInfo) =
   info ?= apiInfo
 updateModel (ErrorHandler msg) =
@@ -73,10 +73,7 @@ updateModel (ErrorHandler msg) =
 ----------------------------------------------------------------------------
 -- | View function, with routing
 viewModel :: Model -> View Model Action
-viewModel m = view
-  where
-    view =
-      div_
+viewModel m = div_
       [ CSS.style_
         [ CSS.textAlign "center"
         , CSS.margin "200px"
@@ -129,7 +126,7 @@ viewModel m = view
               ]
             ]
       ]
-
+  where
     tr :: MisoString -> View Model action
     tr x = tr_ [] [ td_ [] [ text x ] ]
 ----------------------------------------------------------------------------
