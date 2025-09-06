@@ -22,6 +22,9 @@ import           Data.Maybe
 import           GHC.Generics
 ----------------------------------------------------------------------------
 import           Miso hiding (defaultOptions)
+import qualified Miso.Html.Event as E
+import qualified Miso.Html.Element as H
+import qualified Miso.Html.Property as P
 import           Miso.String
 import           Miso.Lens
 import qualified Miso.CSS as CSS
@@ -46,9 +49,8 @@ info = lens _info $ \r x -> r { _info = x }
 -- | Action
 data Action
   = FetchGitHub
-  | SetGitHub GitHub
-  | ErrorHandler MisoString
-  deriving (Show, Eq)
+  | SetGitHub (Response GitHub)
+  | ErrorHandler (Response (Maybe MisoString))
 ----------------------------------------------------------------------------
 app :: App Model Action
 app = (component emptyModel updateModel viewModel)
@@ -66,54 +68,57 @@ emptyModel = Model Nothing
 updateModel :: Action -> Transition Model Action
 updateModel FetchGitHub =
   getJSON "https://api.github.com" [] SetGitHub ErrorHandler
-updateModel (SetGitHub apiInfo) =
-  info ?= apiInfo
-updateModel (ErrorHandler msg) =
-  io_ (consoleError msg)
+updateModel (SetGitHub Response {..}) =
+  info ?= body
+updateModel (ErrorHandler Response {..}) =
+  case errorMessage of
+    Nothing -> pure ()
+    Just errMsg -> 
+      io_ (consoleError errMsg)
 ----------------------------------------------------------------------------
 -- | View function, with routing
 viewModel :: Model -> View Model Action
-viewModel m = div_
+viewModel m = H.div_
       [ CSS.style_
         [ CSS.textAlign "center"
         , CSS.margin "200px"
         ]
       ]
-      [ h1_
-        [ class_ $ pack "title"
+      [ H.h1_
+        [ P.class_ $ pack "title"
         ]
         [ "🍜 Miso Fetch API"
         ]
       , optionalAttrs
-        button_
-        [ onClick FetchGitHub
-        , class_ (pack "button is-large is-outlined")
+        H.button_
+        [ E.onClick FetchGitHub
+        , P.class_ (pack "button is-large is-outlined")
         ]
         (isJust (m ^. info))
-        [ disabled_
+        [ P.disabled_
         ]
         [ "Fetch JSON from https://api.github.com"
         ]
       , case m ^. info of
           Nothing ->
-            div_
+            H.div_
             []
             [ "No data"
             ]
           Just GitHub {..} ->
-            table_
-            [ class_ "table is-striped" ]
-            [ thead_
+            H.table_
+            [ P.class_ "table is-striped" ]
+            [ H.thead_
               []
-              [ tr_
+              [ H.tr_
                 []
-                [ th_
+                [ H.th_
                   []
                   [ text "URLs"
                   ]
                 ]
               ]
-            , tbody_
+            , H.tbody_
               []
               [ tr currentUserUrl
               , tr emojisUrl
@@ -128,7 +133,7 @@ viewModel m = div_
       ]
   where
     tr :: MisoString -> View Model action
-    tr x = tr_ [] [ td_ [] [ text x ] ]
+    tr x = H.tr_ [] [ H.td_ [] [ text x ] ]
 ----------------------------------------------------------------------------
 -- | Structure to capture the JSON returned from https://api.github.com
 data GitHub
