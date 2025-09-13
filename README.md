@@ -1,6 +1,6 @@
 # :ramen: ⚡ miso-fetch
 
-<a href="fetch.haskell-miso.org">
+<a href="https://fetch.haskell-miso.org/">
   <img width="708" height="349" alt="image" src="https://github.com/user-attachments/assets/62e6e3dc-ad69-4fdd-bdff-186efc6e51eb" />
 </a>
 
