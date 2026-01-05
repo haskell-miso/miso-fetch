@@ -17,11 +17,11 @@
 ----------------------------------------------------------------------------
 module Main where
 ----------------------------------------------------------------------------
-import           Data.Aeson
 import           Data.Maybe
 import           GHC.Generics
 ----------------------------------------------------------------------------
 import           Miso hiding (defaultOptions)
+import           Miso.JSON
 import           Miso.String
 import qualified Miso.Html.Event as E
 import qualified Miso.Html.Element as H
