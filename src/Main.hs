@@ -35,7 +35,7 @@ foreign export javascript "hs_start" main :: IO ()
 ----------------------------------------------------------------------------
 -- | Main entry point
 main :: IO ()
-main = run (startApp app)
+main = startApp app
 ----------------------------------------------------------------------------
 -- | Model
 newtype Model = Model
@@ -65,7 +65,7 @@ app = (component emptyModel updateModel viewModel)
 emptyModel :: Model
 emptyModel = Model Nothing
 ----------------------------------------------------------------------------
-updateModel :: Action -> Transition Model Action
+updateModel :: Action -> Effect ROOT Model Action
 updateModel = \case
   FetchGitHub ->
     getJSON "https://api.github.com" [] SetGitHub ErrorHandler
