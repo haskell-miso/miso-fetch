@@ -35,7 +35,7 @@ foreign export javascript "hs_start" main :: IO ()
 ----------------------------------------------------------------------------
 -- | Main entry point
 main :: IO ()
-main = startApp app
+main = startApp defaultEvents app
 ----------------------------------------------------------------------------
 -- | Model
 newtype Model = Model
