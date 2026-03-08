@@ -16,7 +16,7 @@ data Action
 app :: App Model Action
 app = component emptyModel updateModel viewModel
 ----------------------------------------------------------------------------
-updateModel :: Action -> Transition Model Action
+updateModel :: Action -> Effect ROOT Model Action
 updateModel = \case
   FetchGitHub ->
     getJSON "https://api.github.com" [] SetGitHub ErrorHandler
